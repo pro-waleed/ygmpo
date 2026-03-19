@@ -73,3 +73,14 @@ export interface ContentItemRecord {
   status: "مسودة" | "قيد المراجعة" | "منشور";
   owner: string;
 }
+
+export interface EvaluationCriterionRecord {
+  id: string;
+  title: string;
+  category: "حوكمة" | "حضور" | "تواجد" | "مواقف" | "وزارة" | "قانون" | "إعلام رقمي";
+  weight: number;
+  enabled: boolean;
+  evidenceRequired: boolean;
+  reviewerRequired: boolean;
+  note: string;
+}

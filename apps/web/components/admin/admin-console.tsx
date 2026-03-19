@@ -1,15 +1,32 @@
 "use client";
 
 import { useEffect, useMemo, useState, startTransition } from "react";
-import type { AdminUserRecord, ContentItemRecord, MinistrySnapshot, OfficialSnapshot, RoleRecord, SourceRecord } from "@ygmpo/shared/types";
-import { adminUsers as seedUsers, contentItems as seedContent, ministrySnapshots as seedMinistries, officialSnapshots as seedOfficials, roleRecords as seedRoles, sourceRecords as seedSources } from "@ygmpo/shared/demo-data";
+import type {
+  AdminUserRecord,
+  ContentItemRecord,
+  EvaluationCriterionRecord,
+  MinistrySnapshot,
+  OfficialSnapshot,
+  RoleRecord,
+  SourceRecord
+} from "@ygmpo/shared/types";
+import {
+  adminUsers as seedUsers,
+  contentItems as seedContent,
+  evaluationCriteria as seedCriteria,
+  ministrySnapshots as seedMinistries,
+  officialSnapshots as seedOfficials,
+  roleRecords as seedRoles,
+  sourceRecords as seedSources
+} from "@ygmpo/shared/demo-data";
 
-type TabKey = "overview" | "ministries" | "officials" | "sources" | "roles" | "content";
+type TabKey = "overview" | "criteria" | "ministries" | "officials" | "sources" | "roles" | "content";
 
-const storageKey = "ygmpo-admin-state-v1";
+const storageKey = "ygmpo-admin-state-v2";
 
 const tabs: { key: TabKey; label: string; helper: string }[] = [
   { key: "overview", label: "مركز التحكم", helper: "ملخص الإدارة" },
+  { key: "criteria", label: "معايير الوزراء", helper: "إدارة عناصر التقييم" },
   { key: "ministries", label: "الجهات", helper: "الوزارات والجهات" },
   { key: "officials", label: "المسؤولون", helper: "الوزراء والقيادات" },
   { key: "sources", label: "المصادر", helper: "الأدلة والمرجعيات" },
@@ -25,6 +42,7 @@ export function AdminConsole() {
   const [roles, setRoles] = useState<RoleRecord[]>(seedRoles);
   const [users, setUsers] = useState<AdminUserRecord[]>(seedUsers);
   const [contentItems, setContentItems] = useState<ContentItemRecord[]>(seedContent);
+  const [criteria, setCriteria] = useState<EvaluationCriterionRecord[]>(seedCriteria);
 
   const [ministryName, setMinistryName] = useState("");
   const [ministerName, setMinisterName] = useState("");
@@ -35,6 +53,8 @@ export function AdminConsole() {
   const [roleName, setRoleName] = useState("");
   const [contentTitle, setContentTitle] = useState("");
   const [contentOwner, setContentOwner] = useState("");
+  const [criterionTitle, setCriterionTitle] = useState("");
+  const [criterionWeight, setCriterionWeight] = useState("10");
 
   useEffect(() => {
     const saved = window.localStorage.getItem(storageKey);
@@ -47,6 +67,7 @@ export function AdminConsole() {
       if (parsed.roles) setRoles(parsed.roles);
       if (parsed.users) setUsers(parsed.users);
       if (parsed.contentItems) setContentItems(parsed.contentItems);
+      if (parsed.criteria) setCriteria(parsed.criteria);
     } catch {
       window.localStorage.removeItem(storageKey);
     }
@@ -54,13 +75,18 @@ export function AdminConsole() {
 
   useEffect(() => {
     startTransition(() => {
-      window.localStorage.setItem(storageKey, JSON.stringify({ ministries, officials, sources, roles, users, contentItems }));
+      window.localStorage.setItem(storageKey, JSON.stringify({ ministries, officials, sources, roles, users, contentItems, criteria }));
     });
-  }, [ministries, officials, sources, roles, users, contentItems]);
+  }, [ministries, officials, sources, roles, users, contentItems, criteria]);
 
   const pendingReviewCount = useMemo(
-    () => contentItems.filter((item) => item.status === "قيد المراجعة").length + sources.filter((item) => item.credibility === "قيد المراجعة").length,
-    [contentItems, sources]
+    () => contentItems.filter((item) => item.status === "قيد المراجعة").length + sources.filter((item) => item.credibility === "قيد المراجعة").length + criteria.filter((item) => item.reviewerRequired && item.enabled).length,
+    [contentItems, sources, criteria]
+  );
+
+  const totalActiveWeight = useMemo(
+    () => criteria.filter((item) => item.enabled).reduce((sum, item) => sum + item.weight, 0),
+    [criteria]
   );
 
   function addMinistry() {
@@ -98,23 +124,34 @@ export function AdminConsole() {
     setContentOwner("");
   }
 
+  function addCriterion() {
+    if (!criterionTitle.trim()) return;
+    setCriteria((current) => [{ id: `ec-${Date.now()}`, title: criterionTitle.trim(), category: "حوكمة", weight: Number(criterionWeight), enabled: true, evidenceRequired: true, reviewerRequired: true, note: "عنصر مضاف من لوحة الإدارة." }, ...current]);
+    setCriterionTitle("");
+    setCriterionWeight("10");
+  }
+
+  function updateCriterion(id: string, patch: Partial<EvaluationCriterionRecord>) {
+    setCriteria((current) => current.map((item) => (item.id === id ? { ...item, ...patch } : item)));
+  }
+
   return (
     <div className="space-y-8">
-      <section className="hero-panel grid-glow reveal-up relative overflow-hidden rounded-[36px] px-8 py-10 text-white shadow-soft">
+      <section className="hero-panel hero-sheen grid-glow reveal-up relative overflow-hidden rounded-[36px] px-8 py-10 text-white shadow-soft">
         <div className="float-orb left-10 top-12 h-24 w-24 bg-gold/60" />
         <div className="float-orb right-14 top-10 h-32 w-32 bg-teal/40" />
         <div className="float-orb bottom-8 left-1/3 h-16 w-16 bg-white/20" />
         <div className="relative z-10 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
           <div>
-            <span className="metric-pill text-white">إدارة المحتوى والبيانات</span>
-            <h1 className="mt-5 text-4xl font-extrabold leading-tight">لوحة التحكم التشغيلية للمنصة</h1>
-            <p className="mt-4 max-w-3xl text-base leading-8 text-white/80">هذه الواجهة مخصصة لإدارة المنصة نفسها: إضافة الجهات، المسؤولين، المصادر، الأدوار، والعناصر التحريرية. الحفظ هنا تجريبي داخل المتصفح ليُظهر سير العمل والإدارة بصورة حية أمام الشركاء.</p>
+            <span className="metric-pill text-white">إدارة المحتوى والبيانات والتقييم</span>
+            <h1 className="mt-5 text-4xl font-extrabold leading-tight">لوحة تشغيلية أكثر حيوية لإدارة المنصة ومعايير تقييم الوزراء</h1>
+            <p className="mt-4 max-w-3xl text-base leading-8 text-white/80">تتضمن هذه الواجهة إدارة المنصة نفسها: الجهات، المسؤولون، المصادر، الأدوار، المحتوى، ومعايير تقييم الوزراء التي يمكن التحكم بوزنها وتفعيلها واشتراطات الدليل والمراجعة الخاصة بها.</p>
           </div>
           <div className="glass-card grid gap-4 p-5 text-ink">
             <div className="rounded-3xl bg-white/75 p-4"><p className="text-sm text-ink/55">العناصر بانتظار مراجعة</p><p className="mt-2 text-3xl font-extrabold">{pendingReviewCount}</p></div>
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-3xl bg-white/75 p-4"><p className="text-sm text-ink/55">المصادر</p><p className="mt-2 text-2xl font-bold">{sources.length}</p></div>
-              <div className="rounded-3xl bg-white/75 p-4"><p className="text-sm text-ink/55">المستخدمون</p><p className="mt-2 text-2xl font-bold">{users.length}</p></div>
+              <div className="rounded-3xl bg-white/75 p-4"><p className="text-sm text-ink/55">المعايير النشطة</p><p className="mt-2 text-2xl font-bold">{criteria.filter((item) => item.enabled).length}</p></div>
+              <div className="rounded-3xl bg-white/75 p-4"><p className="text-sm text-ink/55">الوزن الكلي</p><p className="mt-2 text-2xl font-bold">{totalActiveWeight}</p></div>
             </div>
           </div>
         </div>
@@ -135,7 +172,7 @@ export function AdminConsole() {
               <InfoBox label="الجهات" value={ministries.length.toString()} />
               <InfoBox label="المسؤولون" value={officials.length.toString()} />
               <InfoBox label="الأدوار" value={roles.length.toString()} />
-              <InfoBox label="المحتوى" value={contentItems.length.toString()} />
+              <InfoBox label="عناصر التقييم" value={criteria.length.toString()} />
             </div>
           </div>
           <div className="card reveal-up p-6">
@@ -153,6 +190,56 @@ export function AdminConsole() {
                 </article>
               ))}
             </div>
+          </div>
+        </section>
+      )}
+
+      {activeTab === "criteria" && (
+        <section className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+          <ManagementSection title="معايير تقييم الوزراء" subtitle="إدارة عناصر التقييم التي تؤثر على درجة الوزير شهريًا">
+            <div className="grid gap-3 md:grid-cols-[1fr_160px_auto]">
+              <input className="input-shell" value={criterionTitle} onChange={(event) => setCriterionTitle(event.target.value)} placeholder="عنوان عنصر تقييم جديد" />
+              <input className="input-shell" value={criterionWeight} onChange={(event) => setCriterionWeight(event.target.value)} placeholder="الوزن" type="number" min="1" max="100" />
+              <button type="button" className="primary-button" onClick={addCriterion}>إضافة عنصر</button>
+            </div>
+            <div className="rounded-3xl bg-slate-50/80 p-4 text-sm leading-8 text-ink/72">
+              العناصر المبدئية المضافة: حضور اجتماعات مجلس الوزراء، التصريحات واتساقها، التواجد داخل اليمن، التواجد خارج اليمن بمهمات رسمية، التواجد خارج اليمن بدون مهمة، الأنشطة التخصصية، القرارات، التعيينات والترقيات، وحسابات التواصل ومدى اتساقها مع الموقف الرسمي.
+            </div>
+          </ManagementSection>
+
+          <div className="space-y-4">
+            {criteria.map((item) => (
+              <article key={item.id} className="card reveal-up p-5">
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="text-lg font-bold">{item.title}</h3>
+                      <span className="admin-pill">{item.category}</span>
+                    </div>
+                    <p className="mt-2 text-sm leading-7 text-ink/65">{item.note}</p>
+                  </div>
+                  <div className="rounded-2xl bg-slate-50 px-4 py-2 text-sm font-semibold text-ink">وزن {item.weight}</div>
+                </div>
+                <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_1fr_1fr]">
+                  <label className="rounded-2xl bg-slate-50/80 p-4 text-sm text-ink/75">
+                    <span className="mb-3 block font-medium">الوزن</span>
+                    <input type="range" min="1" max="30" value={item.weight} onChange={(event) => updateCriterion(item.id, { weight: Number(event.target.value) })} className="w-full accent-teal" />
+                  </label>
+                  <label className="flex items-center justify-between rounded-2xl bg-slate-50/80 p-4 text-sm text-ink/75">
+                    <span>تفعيل العنصر</span>
+                    <input type="checkbox" checked={item.enabled} onChange={(event) => updateCriterion(item.id, { enabled: event.target.checked })} className="h-5 w-5 accent-teal" />
+                  </label>
+                  <label className="flex items-center justify-between rounded-2xl bg-slate-50/80 p-4 text-sm text-ink/75">
+                    <span>اشتراط دليل</span>
+                    <input type="checkbox" checked={item.evidenceRequired} onChange={(event) => updateCriterion(item.id, { evidenceRequired: event.target.checked })} className="h-5 w-5 accent-teal" />
+                  </label>
+                </div>
+                <div className="mt-4 flex flex-wrap gap-3 text-xs text-ink/65">
+                  <span className="rounded-full bg-slate-100 px-3 py-1">{item.reviewerRequired ? "يتطلب مراجعة" : "لا يتطلب مراجعة"}</span>
+                  <span className="rounded-full bg-slate-100 px-3 py-1">{item.enabled ? "نشط" : "معطل"}</span>
+                </div>
+              </article>
+            ))}
           </div>
         </section>
       )}

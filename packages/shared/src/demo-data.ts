@@ -2,6 +2,7 @@ import type {
   AdminUserRecord,
   ContentItemRecord,
   DashboardStat,
+  EvaluationCriterionRecord,
   MinistrySnapshot,
   OfficialSnapshot,
   ReportSummary,
@@ -12,8 +13,8 @@ import type {
 export const dashboardStats: DashboardStat[] = [
   { label: "الجهات المعروضة", value: "7", hint: "تشكيلة تجريبية محدثة من حكومة الزنداني", trend: "up" },
   { label: "الوزراء المعروضون", value: "7", hint: "أسماء محدثة وفق الحكومة الحالية", trend: "up" },
-  { label: "المصادر الموثقة", value: "18", hint: "بين رسمي وإعلامي وميداني", trend: "up" },
-  { label: "حالة المنصة", value: "جاهزة للعرض", hint: "واجهة عامة + إدارة محتوى تجريبية", trend: "stable" }
+  { label: "معايير التقييم", value: "9", hint: "قابلة للتعديل من لوحة الإدارة", trend: "up" },
+  { label: "حالة المنصة", value: "جاهزة للعرض", hint: "واجهة عامة + إدارة محتوى وتجهيز تقييم", trend: "stable" }
 ];
 
 export const ministrySnapshots: MinistrySnapshot[] = [
@@ -79,4 +80,16 @@ export const contentItems: ContentItemRecord[] = [
   { id: "c2", title: "تصريح رسمي حول الكهرباء", type: "تصريح", status: "منشور", owner: "مدخل بيانات الوزراء" },
   { id: "c3", title: "مبادرة الاستجابة للخدمات", type: "مبادرة", status: "مسودة", owner: "محلل الأداء" },
   { id: "c4", title: "اتساق الموقف الرسمي لملف إقليمي", type: "مؤشر حساس", status: "قيد المراجعة", owner: "مراجع المنهجية" }
+];
+
+export const evaluationCriteria: EvaluationCriterionRecord[] = [
+  { id: "ec1", title: "حضور اجتماعات مجلس الوزراء", category: "حضور", weight: 14, enabled: true, evidenceRequired: true, reviewerRequired: false, note: "يحتسب من سجلات الحضور الرسمية ومحاضر الاجتماع." },
+  { id: "ec2", title: "التصريحات واتساقها مع الموقف الرسمي", category: "مواقف", weight: 18, enabled: true, evidenceRequired: true, reviewerRequired: true, note: "يتطلب ربط التصريح بمصدر رسمي أو إعلامي موثق ومراجعة بشرية." },
+  { id: "ec3", title: "التواجد في اليمن", category: "تواجد", weight: 10, enabled: true, evidenceRequired: true, reviewerRequired: false, note: "يحتسب وفق سجل زمني موثق للفترة التقييمية." },
+  { id: "ec4", title: "التواجد خارج اليمن بمهمات رسمية", category: "تواجد", weight: 8, enabled: true, evidenceRequired: true, reviewerRequired: false, note: "يحسب عند وجود تفويض أو مهمة أو اجتماع رسمي مثبت." },
+  { id: "ec5", title: "التواجد خارج اليمن بدون مهمة", category: "تواجد", weight: 8, enabled: true, evidenceRequired: true, reviewerRequired: true, note: "يعامل كعنصر خافض في التقييم ويتطلب توثيق حالة عدم وجود مهمة." },
+  { id: "ec6", title: "الأنشطة التخصصية في الوزارة", category: "وزارة", weight: 12, enabled: true, evidenceRequired: true, reviewerRequired: false, note: "يقاس بمدى النشاط التنفيذي والزيارات والاجتماعات القطاعية." },
+  { id: "ec7", title: "القرارات المتخذة", category: "وزارة", weight: 10, enabled: true, evidenceRequired: true, reviewerRequired: false, note: "يربط بعدد القرارات وجودتها ومدى اتصالها بأولويات الوزارة." },
+  { id: "ec8", title: "التعيينات والترقيات ومدى اتساقها مع القانون", category: "قانون", weight: 12, enabled: true, evidenceRequired: true, reviewerRequired: true, note: "يتطلب التحقق من الأساس القانوني والإجراءات المنظمة." },
+  { id: "ec9", title: "حسابات الوزير على وسائل التواصل ومدى ارتباطها بالمهام الرسمية", category: "إعلام رقمي", weight: 8, enabled: true, evidenceRequired: true, reviewerRequired: true, note: "يفحص الاتساق مع الموقف الرسمي للدولة وطبيعة الاستخدام المهني." }
 ];
