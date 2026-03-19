@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 
 type Row = {
   id: string;
@@ -12,14 +12,17 @@ type Row = {
 
 export function RankingTable({ title, rows }: { title: string; rows: Row[] }) {
   return (
-    <section className="card p-6">
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="section-title text-xl">{title}</h2>
+    <section className="card reveal-up p-6">
+      <div className="mb-5 flex items-center justify-between">
+        <div>
+          <h2 className="section-title text-xl">{title}</h2>
+          <p className="mt-1 text-sm text-ink/55">عرض مرتب قابل للمشاركة أمام الشركاء وصناع القرار</p>
+        </div>
         <span className="metric-pill">عرض تفاعلي</span>
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full text-right text-sm">
-          <thead className="text-ink/60">
+          <thead className="text-ink/55">
             <tr>
               <th className="pb-3">الاسم</th>
               <th className="pb-3">الدرجة</th>
@@ -29,20 +32,20 @@ export function RankingTable({ title, rows }: { title: string; rows: Row[] }) {
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => (
-              <tr key={row.id} className="border-t border-mist/80">
+            {rows.map((row, index) => (
+              <tr key={row.id} className="border-t border-mist/80 transition hover:bg-slate-50/70">
                 <td className="py-4">
                   <div>
-                    <p className="font-semibold">{row.name}</p>
-                    <p className="text-ink/60">{row.subtitle}</p>
+                    <p className="font-semibold text-ink">{index + 1}. {row.name}</p>
+                    <p className="text-ink/58">{row.subtitle}</p>
                   </div>
                 </td>
-                <td className="py-4 font-bold text-teal">{row.score}%</td>
-                <td className="py-4">{row.metaA}</td>
-                <td className="py-4">{row.metaB}</td>
+                <td className="py-4 font-extrabold text-teal">{row.score}%</td>
+                <td className="py-4 text-ink/70">{row.metaA}</td>
+                <td className="py-4 text-ink/70">{row.metaB}</td>
                 <td className="py-4">
-                  <Link href={row.href} className="rounded-full border border-teal/20 px-4 py-2 text-teal hover:bg-teal/5">
-                    عرض الملف
+                  <Link href={row.href} className="soft-button inline-flex items-center gap-2">
+                    <span>عرض الملف</span>
                   </Link>
                 </td>
               </tr>

@@ -1,10 +1,19 @@
-import type { DashboardStat, MinistrySnapshot, OfficialSnapshot, ReportSummary } from "./types";
+import type {
+  AdminUserRecord,
+  ContentItemRecord,
+  DashboardStat,
+  MinistrySnapshot,
+  OfficialSnapshot,
+  ReportSummary,
+  RoleRecord,
+  SourceRecord
+} from "./types";
 
 export const dashboardStats: DashboardStat[] = [
   { label: "الجهات المعروضة", value: "7", hint: "تشكيلة تجريبية محدثة من حكومة الزنداني", trend: "up" },
   { label: "الوزراء المعروضون", value: "7", hint: "أسماء محدثة وفق الحكومة الحالية", trend: "up" },
-  { label: "تاريخ التحديث المرجعي", value: "19 مارس 2026", hint: "اعتمادًا على مرجع حكومة الزنداني", trend: "stable" },
-  { label: "حالة النسخة", value: "عرض حي", hint: "واجهة استعراض عامة قابلة للمشاركة", trend: "stable" }
+  { label: "المصادر الموثقة", value: "18", hint: "بين رسمي وإعلامي وميداني", trend: "up" },
+  { label: "حالة المنصة", value: "جاهزة للعرض", hint: "واجهة عامة + إدارة محتوى تجريبية", trend: "stable" }
 ];
 
 export const ministrySnapshots: MinistrySnapshot[] = [
@@ -40,6 +49,34 @@ export const reportSummaries: ReportSummary[] = [
     title: "تقرير وزارة الصحة العامة والسكان - مارس 2026",
     periodLabel: "مارس 2026",
     publishedAt: "2026-03-19",
-    summary: "يعرض نموذجًا لتقرير قطاعي قابل للطباعة يربط الأداء التنفيذي والانتشار الميداني والمراجعة المبنية على الأدلة."
+    summary: "يعرض نموذجًا لتقرير قطاعي قابلًا للطباعة يربط الأداء التنفيذي والانتشار الميداني والمراجعة المبنية على الأدلة."
   }
+];
+
+export const sourceRecords: SourceRecord[] = [
+  { id: "s1", title: "قرار جمهوري بتشكيل الحكومة", type: "رسمي", url: "https://www.sabanew.net", credibility: "عال" },
+  { id: "s2", title: "إحاطة صحفية لرئاسة الوزراء", type: "رسمي", url: "https://www.sabanew.net", credibility: "عال" },
+  { id: "s3", title: "تغطية إعلامية لملف الكهرباء", type: "إعلامي", url: "https://example.org/power", credibility: "متوسط" },
+  { id: "s4", title: "مذكرة متابعة ميدانية", type: "ميداني", url: "https://example.org/field", credibility: "قيد المراجعة" }
+];
+
+export const roleRecords: RoleRecord[] = [
+  { id: "r-admin", name: "مدير النظام", permissions: ["إدارة المستخدمين", "إدارة الأدوار", "نشر التقارير", "إدارة المنهجية"], membersCount: 1 },
+  { id: "r-analyst", name: "محلل", permissions: ["تحليل المؤشرات", "مراجعة المحتوى", "إنشاء تقارير"], membersCount: 2 },
+  { id: "r-entry", name: "مدخل بيانات", permissions: ["إضافة المسؤولين", "إضافة المصادر", "تعبئة المؤشرات"], membersCount: 3 },
+  { id: "r-reviewer", name: "مراجع", permissions: ["اعتماد الأدلة", "مراجعة المؤشرات الحساسة"], membersCount: 2 }
+];
+
+export const adminUsers: AdminUserRecord[] = [
+  { id: "u1", name: "مدير النظام", role: "مدير النظام", status: "نشط" },
+  { id: "u2", name: "محلل الأداء", role: "محلل", status: "نشط", ministry: "وزارة المالية" },
+  { id: "u3", name: "مدخل بيانات الوزراء", role: "مدخل بيانات", status: "نشط", ministry: "وزارة الصحة العامة والسكان" },
+  { id: "u4", name: "مراجع المنهجية", role: "مراجع", status: "بانتظار التفعيل" }
+];
+
+export const contentItems: ContentItemRecord[] = [
+  { id: "c1", title: "تقرير الأداء الحكومي الشهري", type: "تقرير", status: "قيد المراجعة", owner: "محلل الأداء" },
+  { id: "c2", title: "تصريح رسمي حول الكهرباء", type: "تصريح", status: "منشور", owner: "مدخل بيانات الوزراء" },
+  { id: "c3", title: "مبادرة الاستجابة للخدمات", type: "مبادرة", status: "مسودة", owner: "محلل الأداء" },
+  { id: "c4", title: "اتساق الموقف الرسمي لملف إقليمي", type: "مؤشر حساس", status: "قيد المراجعة", owner: "مراجع المنهجية" }
 ];

@@ -1,22 +1,46 @@
-﻿@tailwind base;
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  color-scheme: light;
+}
+
 html {
   direction: rtl;
+  scroll-behavior: smooth;
 }
 
 body {
-  @apply bg-sand text-ink antialiased;
-  background-image: radial-gradient(circle at top right, rgba(183,138,44,0.16), transparent 28%), linear-gradient(180deg, #f9f6ef 0%, #eef3f5 100%);
+  @apply min-h-screen bg-sand text-ink antialiased;
+  background-color: #f6f1e7;
+  background-image:
+    radial-gradient(circle at 10% 10%, rgba(183, 138, 44, 0.2), transparent 22%),
+    radial-gradient(circle at 90% 15%, rgba(15, 118, 110, 0.14), transparent 20%),
+    linear-gradient(135deg, rgba(255,255,255,0.65), rgba(223,231,234,0.15)),
+    linear-gradient(180deg, #fcf8f0 0%, #eef3f5 52%, #f8f2e8 100%);
 }
 
 * {
   box-sizing: border-box;
 }
 
+::selection {
+  background: rgba(15, 118, 110, 0.18);
+}
+
 .card {
-  @apply rounded-3xl border border-white/60 bg-white/85 shadow-soft backdrop-blur;
+  @apply rounded-[28px] border border-white/70 bg-white/80 shadow-soft backdrop-blur-xl;
+}
+
+.glass-card {
+  @apply rounded-[32px] border border-white/60 bg-white/60 shadow-soft backdrop-blur-2xl;
+}
+
+.hero-panel {
+  background:
+    linear-gradient(135deg, rgba(19,34,47,0.96), rgba(17,79,95,0.92) 48%, rgba(183,138,44,0.88)),
+    radial-gradient(circle at top right, rgba(255,255,255,0.16), transparent 28%);
 }
 
 .section-title {
@@ -24,5 +48,81 @@ body {
 }
 
 .metric-pill {
-  @apply inline-flex items-center rounded-full bg-teal/10 px-3 py-1 text-sm text-teal;
+  @apply inline-flex items-center rounded-full border border-white/40 bg-white/15 px-3 py-1 text-sm text-teal backdrop-blur;
+}
+
+.admin-pill {
+  @apply inline-flex items-center rounded-full bg-ink px-3 py-1 text-xs text-white;
+}
+
+.grid-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.grid-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(180deg, rgba(0,0,0,0.9), transparent);
+  pointer-events: none;
+}
+
+.float-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(18px);
+  opacity: 0.55;
+  animation: drift 11s ease-in-out infinite;
+}
+
+.float-orb:nth-child(2) {
+  animation-delay: -3s;
+}
+
+.float-orb:nth-child(3) {
+  animation-delay: -6s;
+}
+
+.reveal-up {
+  animation: revealUp 0.7s ease-out both;
+}
+
+.stagger-1 { animation-delay: 0.06s; }
+.stagger-2 { animation-delay: 0.12s; }
+.stagger-3 { animation-delay: 0.18s; }
+.stagger-4 { animation-delay: 0.24s; }
+
+.input-shell {
+  @apply rounded-2xl border border-slate-200/80 bg-white px-4 py-3 text-sm text-ink outline-none transition focus:border-teal/50 focus:ring-2 focus:ring-teal/10;
+}
+
+.soft-button {
+  @apply rounded-full border border-ink/10 bg-white px-4 py-2 text-sm font-medium text-ink transition hover:-translate-y-0.5 hover:shadow-soft;
+}
+
+.primary-button {
+  @apply rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:bg-teal;
+}
+
+.status-dot {
+  @apply inline-block h-2.5 w-2.5 rounded-full;
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(0, -18px, 0) scale(1.08); }
+}
+
+@keyframes revealUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
 }

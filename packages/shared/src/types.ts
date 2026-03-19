@@ -42,3 +42,34 @@ export interface ReportSummary {
   publishedAt: string;
   summary: string;
 }
+
+export interface SourceRecord {
+  id: string;
+  title: string;
+  type: "رسمي" | "إعلامي" | "ميداني" | "داخلي";
+  url: string;
+  credibility: "عال" | "متوسط" | "قيد المراجعة";
+}
+
+export interface RoleRecord {
+  id: string;
+  name: string;
+  permissions: string[];
+  membersCount: number;
+}
+
+export interface AdminUserRecord {
+  id: string;
+  name: string;
+  role: string;
+  status: "نشط" | "بانتظار التفعيل";
+  ministry?: string;
+}
+
+export interface ContentItemRecord {
+  id: string;
+  title: string;
+  type: "تقرير" | "تصريح" | "مبادرة" | "مؤشر حساس";
+  status: "مسودة" | "قيد المراجعة" | "منشور";
+  owner: string;
+}
