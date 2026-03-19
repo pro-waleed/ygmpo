@@ -1,8 +1,9 @@
-import type {
+﻿import type {
   AdminUserRecord,
   ContentItemRecord,
   DashboardStat,
   EvaluationCriterionRecord,
+  EvaluationRecord,
   MinistrySnapshot,
   OfficialSnapshot,
   ReportSummary,
@@ -79,7 +80,7 @@ export const evaluationCriteria: EvaluationCriterionRecord[] = [
     enabled: true,
     evidenceRequired: true,
     reviewerRequired: true,
-    note: "يقيّم الموقف أو التصريح أو الإجراء المرتبط بقضية معرفة مسبقًا.",
+    note: "يقيم الموقف أو التصريح أو الإجراء المرتبط بقضية معرفة مسبقًا.",
     objectiveMeasure: "وجود موقف موثق للوزير في القضية المحددة، ومدى اتساقه مع الموقف الرسمي للدولة.",
     calculationMethod: "يعتمد على مقارنة موقف الوزير المسجل مع ملخص الموقف الرسمي للدولة مع توثيق مصدر التصريح أو الفعل.",
     scoringExample: "منسجم ومدعوم بإجراء = 90-100، منسجم دون إجراء = 70-85، غامض = 40-60، متعارض = 0-30."
@@ -94,7 +95,7 @@ export const evaluationCriteria: EvaluationCriterionRecord[] = [
     reviewerRequired: false,
     note: "عنصر موضوعي يعتمد على سجلات الاجتماعات الرسمية.",
     objectiveMeasure: "عدد الاجتماعات التي حضرها الوزير من إجمالي الاجتماعات التي دعي إليها خلال الفترة.",
-    calculationMethod: "النسبة = عدد مرات الحضور ÷ عدد الدعوات الصحيحة × 100.",
+    calculationMethod: "النسبة = عدد مرات الحضور / عدد الدعوات الصحيحة × 100.",
     scoringExample: "90% فأكثر = 100، 75%-89% = 80، 60%-74% = 60، أقل من 60% = 30 أو أقل."
   },
   {
@@ -107,7 +108,7 @@ export const evaluationCriteria: EvaluationCriterionRecord[] = [
     reviewerRequired: false,
     note: "يقيس التواجد الفعلي داخل البلد خلال فترة التقييم.",
     objectiveMeasure: "عدد الأيام داخل اليمن من إجمالي أيام الفترة التقييمية.",
-    calculationMethod: "النسبة = أيام التواجد داخل اليمن ÷ إجمالي أيام الفترة × 100.",
+    calculationMethod: "النسبة = أيام التواجد داخل اليمن / إجمالي أيام الفترة × 100.",
     scoringExample: "80% فأكثر = 100، 65%-79% = 80، 50%-64% = 60، أقل من 50% = 30 أو أقل."
   },
   {
@@ -187,5 +188,72 @@ export const evaluationCriteria: EvaluationCriterionRecord[] = [
     objectiveMeasure: "طبيعة المحتوى المنشور على حسابات الوزير، ومدى ارتباطه بالمهام الرسمية، واتساقه مع الخطاب الرسمي.",
     calculationMethod: "تحلل المنشورات خلال الفترة بحسب الموضوع والصفة الرسمية والاتساق مع الموقف العام للدولة.",
     scoringExample: "استخدام مهني منضبط ومنسجم = 85-100، استخدام مختلط = 60-75، استخدام متعارض أو خارج المهمة = أقل من 40."
+  }
+];
+
+export const evaluationRecords: EvaluationRecord[] = [
+  {
+    id: "er1",
+    officialId: "o1",
+    officialName: "شايع محسن الزنداني",
+    ministryName: "وزارة الخارجية وشؤون المغتربين",
+    criterionId: "ec1",
+    criterionTitle: "موقف الوزير في قضية عامة أو وطنية",
+    periodLabel: "مارس 2026",
+    score: 92,
+    status: "معتمد",
+    evidenceSummary: "تصريح رسمي وبيان متابعة مرتبط بالقضية الإقليمية محل الرصد.",
+    sourceTitle: "إحاطة صحفية لرئاسة الوزراء",
+    impactSummary: "الموقف كان منسجمًا مع السياسة العامة وتبعه تواصل رسمي.",
+    reviewerNote: "تمت المراجعة واعتماد الدرجة بعد مقارنة التصريح بالنص المرجعي للموقف الرسمي.",
+    updatedAt: "2026-03-19"
+  },
+  {
+    id: "er2",
+    officialId: "o2",
+    officialName: "مروان فرج سعيد بن غانم",
+    ministryName: "وزارة المالية",
+    criterionId: "ec2",
+    criterionTitle: "انضباط الوزير في حضور اجتماعات مجلس الوزراء",
+    periodLabel: "مارس 2026",
+    score: 88,
+    status: "معتمد",
+    evidenceSummary: "محاضر حضور 7 اجتماعات من أصل 8 اجتماعات صحيحة الدعوة.",
+    sourceTitle: "سجل أمانة مجلس الوزراء",
+    impactSummary: "انضباط مرتفع مع غياب واحد مبرر.",
+    reviewerNote: "الحساب مبني على نسبة حضور فعلية دون تدخل تقديري.",
+    updatedAt: "2026-03-18"
+  },
+  {
+    id: "er3",
+    officialId: "o3",
+    officialName: "د. قاسم محمد بحيبح",
+    ministryName: "وزارة الصحة العامة والسكان",
+    criterionId: "ec3",
+    criterionTitle: "نسبة التواجد داخل اليمن",
+    periodLabel: "مارس 2026",
+    score: 84,
+    status: "قيد المراجعة",
+    evidenceSummary: "سجل تنقلات موثق يثبت 24 يومًا داخل اليمن خلال فترة الرصد.",
+    sourceTitle: "مذكرة متابعة ميدانية",
+    impactSummary: "التواجد الميداني دعم متابعة الملف الصحي في عدة محافظات.",
+    reviewerNote: "بانتظار استكمال توثيق يومي سفر خارجي لإغلاق السجل النهائي.",
+    updatedAt: "2026-03-19"
+  },
+  {
+    id: "er4",
+    officialId: "o5",
+    officialName: "اللواء إبراهيم حيدان",
+    ministryName: "وزارة الداخلية",
+    criterionId: "ec7",
+    criterionTitle: "القرارات المتخذة",
+    periodLabel: "مارس 2026",
+    score: 71,
+    status: "مسودة",
+    evidenceSummary: "ثلاثة قرارات تشغيلية وقرار تنظيمي قيد التحليل.",
+    sourceTitle: "أرشيف قرارات الوزارة",
+    impactSummary: "القرارات موجودة لكن أثرها التنفيذي ما زال قيد الرصد.",
+    reviewerNote: "يلزم ربط كل قرار بنتيجته العملية قبل الاعتماد.",
+    updatedAt: "2026-03-17"
   }
 ];

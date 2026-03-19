@@ -1,4 +1,4 @@
-export type UserRole = "SYSTEM_ADMIN" | "ANALYST" | "DATA_ENTRY" | "REVIEWER" | "PUBLIC";
+﻿export type UserRole = "SYSTEM_ADMIN" | "ANALYST" | "DATA_ENTRY" | "REVIEWER" | "PUBLIC";
 
 export type SubjectScope = "MINISTRY" | "OFFICIAL" | "BOTH";
 
@@ -86,4 +86,21 @@ export interface EvaluationCriterionRecord {
   objectiveMeasure: string;
   calculationMethod: string;
   scoringExample: string;
+}
+
+export interface EvaluationRecord {
+  id: string;
+  officialId: string;
+  officialName: string;
+  ministryName: string;
+  criterionId: string;
+  criterionTitle: string;
+  periodLabel: string;
+  score: number;
+  status: "مسودة" | "قيد المراجعة" | "معتمد";
+  evidenceSummary: string;
+  sourceTitle: string;
+  impactSummary: string;
+  reviewerNote: string;
+  updatedAt: string;
 }
