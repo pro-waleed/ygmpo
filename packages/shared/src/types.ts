@@ -83,4 +83,7 @@ export interface EvaluationCriterionRecord {
   evidenceRequired: boolean;
   reviewerRequired: boolean;
   note: string;
+  objectiveMeasure: string;
+  calculationMethod: string;
+  scoringExample: string;
 }

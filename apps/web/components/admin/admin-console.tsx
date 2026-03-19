@@ -22,11 +22,11 @@ import {
 
 type TabKey = "overview" | "criteria" | "ministries" | "officials" | "sources" | "roles" | "content";
 
-const storageKey = "ygmpo-admin-state-v2";
+const storageKey = "ygmpo-admin-state-v3";
 
 const tabs: { key: TabKey; label: string; helper: string }[] = [
   { key: "overview", label: "مركز التحكم", helper: "ملخص الإدارة" },
-  { key: "criteria", label: "معايير الوزراء", helper: "إدارة عناصر التقييم" },
+  { key: "criteria", label: "معايير الوزراء", helper: "إدارة عناصر التقييم الموضوعي" },
   { key: "ministries", label: "الجهات", helper: "الوزارات والجهات" },
   { key: "officials", label: "المسؤولون", helper: "الوزراء والقيادات" },
   { key: "sources", label: "المصادر", helper: "الأدلة والمرجعيات" },
@@ -126,7 +126,19 @@ export function AdminConsole() {
 
   function addCriterion() {
     if (!criterionTitle.trim()) return;
-    setCriteria((current) => [{ id: `ec-${Date.now()}`, title: criterionTitle.trim(), category: "حوكمة", weight: Number(criterionWeight), enabled: true, evidenceRequired: true, reviewerRequired: true, note: "عنصر مضاف من لوحة الإدارة." }, ...current]);
+    setCriteria((current) => [{
+      id: `ec-${Date.now()}`,
+      title: criterionTitle.trim(),
+      category: "حوكمة",
+      weight: Number(criterionWeight),
+      enabled: true,
+      evidenceRequired: true,
+      reviewerRequired: true,
+      note: "عنصر مضاف من لوحة الإدارة.",
+      objectiveMeasure: "حدد ما الذي سيقاس بصورة صريحة.",
+      calculationMethod: "حدد قاعدة حساب أو مقارنة واضحة.",
+      scoringExample: "أضف مثالًا على عتبات أو نطاقات الدرجة."
+    }, ...current]);
     setCriterionTitle("");
     setCriterionWeight("10");
   }
@@ -143,9 +155,9 @@ export function AdminConsole() {
         <div className="float-orb bottom-8 left-1/3 h-16 w-16 bg-white/20" />
         <div className="relative z-10 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
           <div>
-            <span className="metric-pill text-white">إدارة المحتوى والبيانات والتقييم</span>
-            <h1 className="mt-5 text-4xl font-extrabold leading-tight">لوحة تشغيلية أكثر حيوية لإدارة المنصة ومعايير تقييم الوزراء</h1>
-            <p className="mt-4 max-w-3xl text-base leading-8 text-white/80">تتضمن هذه الواجهة إدارة المنصة نفسها: الجهات، المسؤولون، المصادر، الأدوار، المحتوى، ومعايير تقييم الوزراء التي يمكن التحكم بوزنها وتفعيلها واشتراطات الدليل والمراجعة الخاصة بها.</p>
+            <span className="metric-pill text-white">إدارة المحتوى والبيانات والتقييم الموضوعي</span>
+            <h1 className="mt-5 text-4xl font-extrabold leading-tight">لوحة تشغيلية لإدارة المنصة ومعايير تقييم الوزراء بصيغة قابلة للقياس</h1>
+            <p className="mt-4 max-w-3xl text-base leading-8 text-white/80">كل عنصر تقييم في هذه الصفحة ليس مجرد عنوان عام، بل أصبح يوضح ما الذي يقاس، وكيف يحتسب، وما المثال العملي على احتساب درجته. هذا يجعل التقييم أكثر موضوعية وقابلية للتفسير والمراجعة.</p>
           </div>
           <div className="glass-card grid gap-4 p-5 text-ink">
             <div className="rounded-3xl bg-white/75 p-4"><p className="text-sm text-ink/55">العناصر بانتظار مراجعة</p><p className="mt-2 text-3xl font-extrabold">{pendingReviewCount}</p></div>
@@ -196,14 +208,14 @@ export function AdminConsole() {
 
       {activeTab === "criteria" && (
         <section className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-          <ManagementSection title="معايير تقييم الوزراء" subtitle="إدارة عناصر التقييم التي تؤثر على درجة الوزير شهريًا">
+          <ManagementSection title="معايير تقييم الوزراء" subtitle="إدارة عناصر التقييم بصيغة موضوعية قابلة للقياس والحساب">
             <div className="grid gap-3 md:grid-cols-[1fr_160px_auto]">
               <input className="input-shell" value={criterionTitle} onChange={(event) => setCriterionTitle(event.target.value)} placeholder="عنوان عنصر تقييم جديد" />
               <input className="input-shell" value={criterionWeight} onChange={(event) => setCriterionWeight(event.target.value)} placeholder="الوزن" type="number" min="1" max="100" />
               <button type="button" className="primary-button" onClick={addCriterion}>إضافة عنصر</button>
             </div>
             <div className="rounded-3xl bg-slate-50/80 p-4 text-sm leading-8 text-ink/72">
-              العناصر المبدئية المضافة: حضور اجتماعات مجلس الوزراء، التصريحات واتساقها، التواجد داخل اليمن، التواجد خارج اليمن بمهمات رسمية، التواجد خارج اليمن بدون مهمة، الأنشطة التخصصية، القرارات، التعيينات والترقيات، وحسابات التواصل ومدى اتساقها مع الموقف الرسمي.
+              أمثلة العناصر الموضوعية الحالية: موقف الوزير في قضية عامة، انضباطه في حضور مجلس الوزراء، نسبة التواجد داخل اليمن، التواجد بمهمة رسمية أو بدونها، الأنشطة التخصصية، القرارات، التعيينات والترقيات، وحضور الوزير الرقمي على وسائل التواصل.
             </div>
           </ManagementSection>
 
@@ -233,6 +245,11 @@ export function AdminConsole() {
                     <span>اشتراط دليل</span>
                     <input type="checkbox" checked={item.evidenceRequired} onChange={(event) => updateCriterion(item.id, { evidenceRequired: event.target.checked })} className="h-5 w-5 accent-teal" />
                   </label>
+                </div>
+                <div className="mt-5 grid gap-3 lg:grid-cols-3">
+                  <MetricExplain title="ما الذي يُقاس؟" value={item.objectiveMeasure} />
+                  <MetricExplain title="كيف يُحسب؟" value={item.calculationMethod} />
+                  <MetricExplain title="مثال على الدرجة" value={item.scoringExample} />
                 </div>
                 <div className="mt-4 flex flex-wrap gap-3 text-xs text-ink/65">
                   <span className="rounded-full bg-slate-100 px-3 py-1">{item.reviewerRequired ? "يتطلب مراجعة" : "لا يتطلب مراجعة"}</span>
@@ -299,6 +316,15 @@ function DataList({ items }: { items: { id: string; title: string; meta: string;
           </div>
         </article>
       ))}
+    </div>
+  );
+}
+
+function MetricExplain({ title, value }: { title: string; value: string }) {
+  return (
+    <div className="rounded-2xl bg-slate-50/80 p-4">
+      <p className="text-xs font-semibold text-teal">{title}</p>
+      <p className="mt-2 text-sm leading-7 text-ink/72">{value}</p>
     </div>
   );
 }
