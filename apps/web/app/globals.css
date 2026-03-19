@@ -1,0 +1,28 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  direction: rtl;
+}
+
+body {
+  @apply bg-sand text-ink antialiased;
+  background-image: radial-gradient(circle at top right, rgba(183,138,44,0.16), transparent 28%), linear-gradient(180deg, #f9f6ef 0%, #eef3f5 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.card {
+  @apply rounded-3xl border border-white/60 bg-white/85 shadow-soft backdrop-blur;
+}
+
+.section-title {
+  @apply text-2xl font-bold text-ink;
+}
+
+.metric-pill {
+  @apply inline-flex items-center rounded-full bg-teal/10 px-3 py-1 text-sm text-teal;
+}

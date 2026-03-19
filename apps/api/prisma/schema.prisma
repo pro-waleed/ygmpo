@@ -1,0 +1,379 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  SYSTEM_ADMIN
+  ANALYST
+  DATA_ENTRY
+  REVIEWER
+  PUBLIC
+}
+
+enum SubjectType {
+  MINISTRY
+  OFFICIAL
+}
+
+enum SubjectScope {
+  MINISTRY
+  OFFICIAL
+  BOTH
+}
+
+enum PeriodStatus {
+  DRAFT
+  OPEN
+  CLOSED
+  LOCKED
+}
+
+enum IndicatorInputType {
+  NUMERIC
+  PERCENTAGE
+  BOOLEAN
+  MANUAL_RATING
+  COMPUTED
+  CATEGORICAL
+}
+
+enum ScoringType {
+  DIRECT
+  THRESHOLD
+  WEIGHTED
+  FORMULA
+  REVIEW_ONLY
+}
+
+enum EvidenceSourceType {
+  OFFICIAL
+  MEDIA
+  FIELD
+  INTERNAL
+  SOCIAL
+}
+
+enum CredibilityLevel {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum AttendanceStatus {
+  INVITED
+  ATTENDED
+  EXCUSED
+  ABSENT
+  NOT_INVITED
+}
+
+enum PresenceType {
+  INSIDE_YEMEN
+  OUTSIDE_YEMEN
+}
+
+enum StatementType {
+  OFFICIAL_STATEMENT
+  INTERVIEW
+  PRESS_RELEASE
+  PUBLIC_REMARK
+  SOCIAL_MEDIA
+  OTHER
+}
+
+enum AlignmentStatus {
+  ALIGNED
+  PARTIALLY_ALIGNED
+  UNCLEAR
+  NOT_ALIGNED
+}
+
+enum ReportType {
+  MINISTRY_MONTHLY
+  OFFICIAL_MONTHLY
+  GOVERNMENT_MONTHLY
+  COMPARISON
+  PUBLIC_SUMMARY
+}
+
+model User {
+  id               String      @id @default(cuid())
+  email            String      @unique
+  passwordHash     String
+  name             String
+  role             UserRole
+  isActive         Boolean     @default(true)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  auditLogs        AuditLog[]
+  reviewEntries    IndicatorEntry[] @relation("EntryReviewer")
+  scoreOverrides   Score[]     @relation("ScoreOverriddenBy")
+}
+
+model Ministry {
+  id               String      @id @default(cuid())
+  nameAr           String
+  code             String      @unique
+  description      String?
+  establishedAt    DateTime?
+  isActive         Boolean     @default(true)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  officials        Official[]
+  subject          EvaluationSubject?
+  reports          Report[]
+}
+
+model Official {
+  id               String      @id @default(cuid())
+  fullNameAr       String
+  titleAr          String
+  appointmentDate  DateTime?
+  endDate          DateTime?
+  isActive         Boolean     @default(true)
+  ministryId       String
+  ministry         Ministry    @relation(fields: [ministryId], references: [id])
+  subject          EvaluationSubject?
+  statements       Statement[]
+  attendance       AttendanceRecord[]
+  presenceRecords  TravelPresenceRecord[]
+  alignments       PositionAlignmentRecord[]
+  reports          Report[]
+}
+
+model EvaluationSubject {
+  id               String      @id @default(cuid())
+  subjectType      SubjectType
+  ministryId       String?     @unique
+  officialId       String?     @unique
+  ministry         Ministry?   @relation(fields: [ministryId], references: [id])
+  official         Official?   @relation(fields: [officialId], references: [id])
+  scores           Score[]
+  indicatorEntries IndicatorEntry[]
+}
+
+model EvaluationAxis {
+  id               String      @id @default(cuid())
+  nameAr           String
+  description      String?
+  scope            SubjectScope
+  weight           Float
+  isActive         Boolean     @default(true)
+  displayOrder     Int         @default(0)
+  archivedAt       DateTime?
+  indicators       EvaluationIndicator[]
+  scores           Score[]
+}
+
+model EvaluationIndicator {
+  id                  String             @id @default(cuid())
+  axisId              String
+  axis                EvaluationAxis     @relation(fields: [axisId], references: [id])
+  nameAr              String
+  description         String?
+  inputType           IndicatorInputType
+  scoringType         ScoringType
+  maxScore            Float
+  weight              Float              @default(1)
+  requiresEvidence    Boolean            @default(false)
+  requiresReview      Boolean            @default(false)
+  isSensitive         Boolean            @default(false)
+  isActive            Boolean            @default(true)
+  displayOrder        Int                @default(0)
+  thresholdConfigJson Json?
+  formulaJson         Json?
+  entries             IndicatorEntry[]
+  scoreDetails        ScoreDetail[]
+}
+
+model EvaluationPeriod {
+  id               String       @id @default(cuid())
+  labelAr          String
+  month            Int
+  year             Int
+  startDate        DateTime
+  endDate          DateTime
+  status           PeriodStatus @default(DRAFT)
+  createdAt        DateTime     @default(now())
+  entries          IndicatorEntry[]
+  meetings         Meeting[]
+  scores           Score[]
+  reports          Report[]
+}
+
+model IndicatorEntry {
+  id               String              @id @default(cuid())
+  periodId         String
+  subjectId        String
+  indicatorId      String
+  valueText        String?
+  numericValue     Float?
+  booleanValue     Boolean?
+  categoricalValue String?
+  notes            String?
+  reviewerNotes    String?
+  confidenceLevel  CredibilityLevel?
+  submittedById    String?
+  reviewedById     String?
+  approvedAt       DateTime?
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  period           EvaluationPeriod    @relation(fields: [periodId], references: [id])
+  subject          EvaluationSubject   @relation(fields: [subjectId], references: [id])
+  indicator        EvaluationIndicator @relation(fields: [indicatorId], references: [id])
+  reviewedBy       User?               @relation("EntryReviewer", fields: [reviewedById], references: [id])
+  evidenceLinks    EvidenceLink[]
+}
+
+model Score {
+  id                String            @id @default(cuid())
+  periodId          String
+  subjectId         String
+  axisId            String?
+  totalScore        Float
+  manualOverride    Float?
+  overrideReason    String?
+  overriddenById    String?
+  createdAt         DateTime          @default(now())
+  period            EvaluationPeriod  @relation(fields: [periodId], references: [id])
+  subject           EvaluationSubject @relation(fields: [subjectId], references: [id])
+  axis              EvaluationAxis?   @relation(fields: [axisId], references: [id])
+  overriddenBy      User?             @relation("ScoreOverriddenBy", fields: [overriddenById], references: [id])
+  details           ScoreDetail[]
+}
+
+model ScoreDetail {
+  id               String              @id @default(cuid())
+  scoreId          String
+  indicatorId      String
+  rawValue         Float?
+  computedScore    Float
+  justification    String?
+  score            Score               @relation(fields: [scoreId], references: [id])
+  indicator        EvaluationIndicator @relation(fields: [indicatorId], references: [id])
+}
+
+model Evidence {
+  id               String             @id @default(cuid())
+  titleAr          String
+  description      String?
+  filePath         String?
+  externalUrl      String?
+  sourceType       EvidenceSourceType
+  credibilityLevel CredibilityLevel
+  notes            String?
+  createdAt        DateTime           @default(now())
+  links            EvidenceLink[]
+}
+
+model EvidenceLink {
+  id               String         @id @default(cuid())
+  evidenceId       String
+  indicatorEntryId String
+  evidence         Evidence       @relation(fields: [evidenceId], references: [id])
+  indicatorEntry   IndicatorEntry @relation(fields: [indicatorEntryId], references: [id])
+}
+
+model Meeting {
+  id               String             @id @default(cuid())
+  periodId         String
+  titleAr          String
+  meetingDate      DateTime
+  locationAr       String?
+  notes            String?
+  period           EvaluationPeriod   @relation(fields: [periodId], references: [id])
+  attendance       AttendanceRecord[]
+}
+
+model AttendanceRecord {
+  id                 String           @id @default(cuid())
+  meetingId          String
+  officialId         String
+  status             AttendanceStatus
+  invited            Boolean          @default(true)
+  participationNotes String?
+  meeting            Meeting          @relation(fields: [meetingId], references: [id])
+  official           Official         @relation(fields: [officialId], references: [id])
+}
+
+model TravelPresenceRecord {
+  id               String       @id @default(cuid())
+  officialId       String
+  presenceType     PresenceType
+  fromDate         DateTime
+  toDate           DateTime
+  purposeAr        String?
+  contextAr        String?
+  missionReference String?
+  notes            String?
+  official         Official     @relation(fields: [officialId], references: [id])
+}
+
+model Statement {
+  id                    String             @id @default(cuid())
+  officialId            String
+  titleAr               String
+  statementType         StatementType
+  sourceType            EvidenceSourceType
+  issueTopicAr          String
+  summaryAr             String
+  statementDate         DateTime
+  sourceUrl             String?
+  officialPositionNotes String?
+  official              Official           @relation(fields: [officialId], references: [id])
+}
+
+model NationalPositionTopic {
+  id                    String                    @id @default(cuid())
+  topicAr               String
+  officialStatePosition String
+  notes                 String?
+  isActive              Boolean                   @default(true)
+  alignments            PositionAlignmentRecord[]
+}
+
+model PositionAlignmentRecord {
+  id                String                 @id @default(cuid())
+  topicId           String
+  officialId        String
+  statementId       String?
+  alignmentStatus   AlignmentStatus
+  scoreContribution Float?
+  actionSummaryAr   String
+  reviewerNotes     String?
+  reviewedAt        DateTime?
+  topic             NationalPositionTopic @relation(fields: [topicId], references: [id])
+  official          Official               @relation(fields: [officialId], references: [id])
+}
+
+model Report {
+  id          String           @id @default(cuid())
+  titleAr     String
+  slug        String           @unique
+  reportType  ReportType
+  periodId    String
+  ministryId  String?
+  officialId  String?
+  summaryAr   String
+  htmlContent String
+  publishedAt DateTime?
+  period      EvaluationPeriod @relation(fields: [periodId], references: [id])
+  ministry    Ministry?        @relation(fields: [ministryId], references: [id])
+  official    Official?        @relation(fields: [officialId], references: [id])
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  action      String
+  entityType  String
+  entityId    String
+  payloadJson Json?
+  createdAt   DateTime @default(now())
+  user        User?    @relation(fields: [userId], references: [id])
+}

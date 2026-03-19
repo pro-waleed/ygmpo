@@ -1,0 +1,17 @@
+{
+  "name": "ygmpo-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Ù…Ù†ØµØ© Ù…Ø±ØµØ¯ Ø§Ù„Ø£Ø¯Ø§Ø¡ Ø§Ù„Ø­ÙƒÙˆÙ…ÙŠ ÙˆØ§Ù„Ù‚ÙŠØ§Ø¯ÙŠ - Ø§Ù„ÙŠÙ…Ù†",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace @ygmpo/web",
+    "dev:api": "npm run start:dev --workspace @ygmpo/api",
+    "build": "npm run build --workspace @ygmpo/shared && npm run build --workspace @ygmpo/api && npm run build --workspace @ygmpo/web",
+    "lint": "npm run lint --workspace @ygmpo/api && npm run lint --workspace @ygmpo/web",
+    "seed": "npm run prisma:seed --workspace @ygmpo/api"
+  }
+}
