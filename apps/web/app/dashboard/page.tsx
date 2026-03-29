@@ -45,7 +45,7 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      <RankingTable title="قائمة الوزراء المعروضين" rows={officialSnapshots.map((item) => ({ id: item.id, name: item.name, score: item.score, subtitle: item.ministryName, metaA: `${item.alignmentRate}% اتساق مع الموقف الرسمي`, metaB: `${item.presenceRate}% تواجد داخل اليمن`, href: `/officials/${item.id}` }))} />
+      <RankingTable title="قائمة الوزراء المعروضين" rows={officialSnapshots.map((item) => ({ id: item.id, name: item.name, score: item.score, subtitle: item.ministryName, metaA: `${item.alignmentRate}% اتساق مع الموقف الرسمي`, metaB: `${item.presenceRate}% تواجد داخل اليمن`, href: `/officials?view=${item.id}` }))} />
     </div>
   );
 }

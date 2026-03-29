@@ -74,7 +74,7 @@ export default function HomePage() {
       </section>
 
       <section className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-        <RankingTable title="الوزارات المعروضة" rows={ministrySnapshots.map((item) => ({ id: item.id, name: item.name, score: item.score, subtitle: item.ministerName, metaA: `${item.attendanceRate}% حضور`, metaB: `${item.insideYemenRate}% داخل اليمن`, href: `/ministries/${item.id}` }))} />
+        <RankingTable title="الوزارات المعروضة" rows={ministrySnapshots.map((item) => ({ id: item.id, name: item.name, score: item.score, subtitle: item.ministerName, metaA: `${item.attendanceRate}% حضور`, metaB: `${item.insideYemenRate}% داخل اليمن`, href: `/ministries?view=${item.id}` }))} />
         <div className="card reveal-up p-6">
           <h2 className="section-title">ماذا تطور في التجربة؟</h2>
           <div className="mt-5 space-y-4 text-sm leading-8 text-ink/75">
@@ -85,7 +85,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <RankingTable title="الوزراء المعروضون" rows={officialSnapshots.map((item) => ({ id: item.id, name: item.name, score: item.score, subtitle: item.ministryName, metaA: `${item.alignmentRate}% اتساق`, metaB: `${item.presenceRate}% تواجد`, href: `/officials/${item.id}` }))} />
+      <RankingTable title="الوزراء المعروضون" rows={officialSnapshots.map((item) => ({ id: item.id, name: item.name, score: item.score, subtitle: item.ministryName, metaA: `${item.alignmentRate}% اتساق`, metaB: `${item.presenceRate}% تواجد`, href: `/officials?view=${item.id}` }))} />
 
       <section className="grid gap-6 lg:grid-cols-2">
         <div className="card reveal-up p-6">
