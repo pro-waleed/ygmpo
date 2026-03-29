@@ -2,7 +2,7 @@
   "name": "ygmpo-monorepo",
   "private": true,
   "version": "0.1.0",
-  "description": "Ù…Ù†ØµØ© Ù…Ø±ØµØ¯ Ø§Ù„Ø£Ø¯Ø§Ø¡ Ø§Ù„Ø­ÙƒÙˆÙ…ÙŠ ÙˆØ§Ù„Ù‚ÙŠØ§Ø¯ÙŠ - Ø§Ù„ÙŠÙ…Ù†",
+  "description": "منصة مرصد الأداء الحكومي والقيادي - اليمن",
   "workspaces": [
     "apps/*",
     "packages/*"

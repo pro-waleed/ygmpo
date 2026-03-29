@@ -1,17 +1,19 @@
+"use client";
+
 import Link from "next/link";
-import { getDashboardData } from "../lib/demo";
 import { RankingTable } from "../components/ui/ranking-table";
 import { StatCard } from "../components/ui/stat-card";
+import { useRuntimeData } from "../lib/runtime-data";
 
 const quickFeatures = [
   "ضبط معايير تقييم الوزراء من لوحة الإدارة",
-  "مؤثرات بصرية أكثر حيوية لعرض stakeholder-ready",
-  "ربط واضح بين العرض العام والإدارة التشغيلية",
+  "انعكاس بيانات الإدارة على العرض داخل نفس البيئة",
+  "ربط أوضح بين العرض العام والإدارة التشغيلية",
   "منهجية قابلة للتفسير مع اشتراطات دليل ومراجعة"
 ];
 
 export default function HomePage() {
-  const { dashboardStats, ministrySnapshots, officialSnapshots, reportSummaries } = getDashboardData();
+  const { dashboardStats, ministrySnapshots, officialSnapshots, reportSummaries } = useRuntimeData();
 
   return (
     <div className="space-y-10">
@@ -23,7 +25,7 @@ export default function HomePage() {
           <div>
             <span className="metric-pill text-white">منصة يمنية أكثر أناقة وحيوية</span>
             <h2 className="mt-5 text-4xl font-extrabold leading-tight">مرصد بصري وتشغيلي يجمع بين العرض المؤسسي الراقي وإدارة المحتوى ومعايير تقييم الوزراء داخل واجهة واحدة.</h2>
-            <p className="mt-5 max-w-3xl text-lg leading-8 text-white/82">تعرض النسخة الحالية الواجهة العامة مع تحسينات حركية وبصرية أوضح، كما تتضمن إدارة تشغيلية للمصادر والجهات والمسؤولين وعناصر التقييم، بما يجعل الديمو أقرب بكثير إلى منصة فعلية قابلة للتطوير.</p>
+            <p className="mt-5 max-w-3xl text-lg leading-8 text-white/82">تعرض النسخة الحالية الواجهة العامة مع تحسينات حركية وبصرية أوضح، كما تتضمن إدارة تشغيلية للمصادر والجهات والمسؤولين وعناصر التقييم. وأصبح ما يجري تعديله داخل لوحة التحكم قابلًا للظهور في صفحات العرض داخل نفس البيئة.</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/dashboard" className="primary-button">استعراض المؤشرات</Link>
               <Link href="/admin" className="soft-button border-white/20 bg-white/10 text-white">فتح إدارة المنصة</Link>
@@ -38,12 +40,12 @@ export default function HomePage() {
           </div>
           <div className="glass-card grid gap-4 p-5 text-ink">
             <div className="rounded-[28px] bg-white/80 p-5">
-              <p className="text-sm text-ink/55">آخر تحديث مرجعي</p>
-              <p className="mt-2 text-3xl font-extrabold">19 مارس 2026</p>
-              <p className="mt-2 text-sm leading-7 text-ink/65">تحديث حكومي مرجعي مع تطوير بصري وإداري للنسخة المعروضة على الشركاء.</p>
+              <p className="text-sm text-ink/55">أحدث قراءة تشغيلية</p>
+              <p className="mt-2 text-3xl font-extrabold">نسخة متصلة بالإدارة</p>
+              <p className="mt-2 text-sm leading-7 text-ink/65">تعكس هذه الصفحة بيانات الإدارة كلما كانت متاحة محليًا داخل المتصفح، بما يجعل الاستعراض أكثر اتساقًا مع لوحة التحكم.</p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
-              {dashboardStats.slice(0, 2).map((stat, index) => <StatCard key={stat.label} {...stat} />)}
+              {dashboardStats.slice(0, 2).map((stat) => <StatCard key={stat.label} {...stat} />)}
             </div>
           </div>
         </div>
@@ -76,9 +78,9 @@ export default function HomePage() {
         <div className="card reveal-up p-6">
           <h2 className="section-title">ماذا تطور في التجربة؟</h2>
           <div className="mt-5 space-y-4 text-sm leading-8 text-ink/75">
-            <p>الواجهة لم تعد مسطحة أو أقرب إلى Skeleton؛ أصبحت أكثر عمقًا وتوازنًا مع حضور بصري مؤسسي أوضح.</p>
-            <p>النسخة باتت تميّز بوضوح بين صفحات العرض العام وصفحات الإدارة والتشغيل.</p>
-            <p>تم تجهيز بنية إدارة معايير تقييم الوزراء بحيث يمكن توسيعها لاحقًا وربطها بالـ API الحقيقي دون تغيير اتجاه المنتج.</p>
+            <p>الواجهة لم تعد مسطحة أو أقرب إلى نموذج أولي جامد، بل أصبحت أكثر عمقًا وتوازنًا مع حضور بصري مؤسسي أوضح.</p>
+            <p>النسخة الحالية تميز بوضوح بين صفحات العرض العام وصفحات الإدارة والتشغيل.</p>
+            <p>تم تجهيز مسار يسمح لبيانات الإدارة بالظهور في صفحات العرض داخل المتصفح نفسه، وهو ما يجعل الديمو أكثر إقناعًا عند التعديل ثم الاستعراض.</p>
           </div>
         </div>
       </section>
@@ -105,7 +107,8 @@ export default function HomePage() {
             <li>إدارة المسؤولين والقيادات.</li>
             <li>إدارة المصادر والأدلة.</li>
             <li>إدارة الأدوار والمستخدمين.</li>
-            <li>إدارة عناصر تقييم الوزراء والتحكم بوزنها وحالتها.</li>
+            <li>إدارة عناصر تقييم الوزراء والتحكم بأوزانها وحالتها.</li>
+            <li>إدارة سجلات التقييم نفسها إضافة وتعديلًا وحذفًا.</li>
           </ul>
         </div>
       </section>
